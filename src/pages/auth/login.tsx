@@ -46,7 +46,9 @@ const LoginPage = () => {
     }
 
     // Todo: navegar a la pantalla que el usuario estaba
-    router.replace('/')
+    const destinaion = router.query.p?.toString() || '/'
+
+    router.replace(destinaion)
   }
   return (
     <AuthLayout title={'Ingresar'}>
