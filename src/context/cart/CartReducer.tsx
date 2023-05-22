@@ -27,6 +27,7 @@ export const CartReducer = (
     case '[Cart] - LoadCart from cookies | storage':
       return {
         ...state,
+        isLoaded: true,
         cart: [...action.payload],
       }
 

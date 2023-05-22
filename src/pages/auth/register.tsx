@@ -30,6 +30,8 @@ const RegisterPage = () => {
   } = useForm<FormData>()
 
   const router = useRouter()
+  const destinaion = router.query.p?.toString() || '/'
+
   const { registerUser } = useContext(AuthContext)
 
   const [showError, setShowError] = useState(false)
@@ -39,8 +41,6 @@ const RegisterPage = () => {
 
     const registerAuth = await registerUser(name, email, password)
 
-    console.log('registerAuth', registerAuth)
-
     if (registerAuth.hasError) {
       setShowError(true)
       setTimeout(() => setShowError(false), 3000)
@@ -48,7 +48,7 @@ const RegisterPage = () => {
     }
 
     // Todo: navegar a la pantalla que el usuario estaba
-    router.replace('/')
+    router.replace(destinaion)
   }
 
   return (
@@ -91,7 +91,7 @@ const RegisterPage = () => {
                   required: 'El email es requerido',
                   validate: validations.isEmail,
                 })}
-                type='email'
+                type="email"
                 error={!!errors.email}
                 helperText={errors.email?.message}
                 label="Correo"
@@ -130,7 +130,7 @@ const RegisterPage = () => {
             </Grid>
 
             <Grid item xs={12} display="flex" justifyContent="end">
-              <NextLink href="/auth/login" passHref>
+              <NextLink href={`/auth/login?p=${destinaion}`} passHref>
                 ¿Ya tienes cuenta?
               </NextLink>
             </Grid>

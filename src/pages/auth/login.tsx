@@ -30,6 +30,8 @@ const LoginPage = () => {
   } = useForm<FormData>()
 
   const router = useRouter()
+  const destinaion = router.query.p?.toString() || '/'
+
   const { loginUser } = useContext(AuthContext)
 
   const [showError, setShowError] = useState(false)
@@ -45,11 +47,9 @@ const LoginPage = () => {
       return
     }
 
-    // Todo: navegar a la pantalla que el usuario estaba
-    const destinaion = router.query.p?.toString() || '/'
-
+    // Pantalla que el usuario estaba
     router.replace(destinaion)
-  }
+  } 
   return (
     <AuthLayout title={'Ingresar'}>
       <form onSubmit={handleSubmit(onLoginUser)} noValidate>
@@ -114,7 +114,7 @@ const LoginPage = () => {
             </Grid>
 
             <Grid item xs={12} display="flex" justifyContent="end">
-              <NextLink href="/auth/register" passHref>
+              <NextLink href={`/auth/register?p=${destinaion}`} passHref>
                 ¿No tienes cuenta?
               </NextLink>
             </Grid>
