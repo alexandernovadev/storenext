@@ -1,7 +1,6 @@
 import { ShopLayout } from '@/components/layouts'
 import { ProductList } from '@/components/products'
 import { FullScreenLoading } from '@/components/ui/FullScreenLoading'
-import { initialData } from '@/database/seed-data'
 import { useProducts } from '@/hooks'
 import { Typography } from '@mui/material'
 import React from 'react'

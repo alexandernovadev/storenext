@@ -1,11 +1,11 @@
 import NextLink from 'next/link'
 
 import {
-  Link,
   Box,
   Button,
   Card,
   CardContent,
+  Chip,
   Divider,
   Grid,
   Typography,
@@ -13,18 +13,38 @@ import {
 
 import { ShopLayout } from '../../components/layouts/ShopLayout'
 import { CartList, OrderSummary } from '../../components/cart'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { CartContext } from '@/context'
 import { countries } from '@/utils'
+import { useRouter } from 'next/router'
 
 const SummaryPage = () => {
-  const { shippingAddress, numberOfItems } = useContext(CartContext)
+  const { shippingAddress, numberOfItems, createOrder } =
+    useContext(CartContext)
+  const router = useRouter()
+  const [isPosting, setIsPosting] = useState(false)
+
+  const [errorMessage, setErrorMessage] = useState('')
 
   // Buscar el país correspondiente en la lista
   const country = countries.find((c) => c.code === shippingAddress?.country)
 
   // Si se encontró el país, usar su nombre, si no, usar una cadena vacía
   const countryName = country ? country.name : ''
+
+  const onCreateOrder = async () => {
+    setIsPosting(true)
+
+    const { hasError, message } = await createOrder()
+
+    if (hasError) {
+      setIsPosting(false)
+      setErrorMessage(message)
+      return
+    }
+
+    router.replace(`/orders/${message}`)
+  }
 
   return (
     <ShopLayout title="Resumen de orden" description={'Resumen de la orden'}>
@@ -74,9 +94,20 @@ const SummaryPage = () => {
               <OrderSummary />
 
               <Box sx={{ mt: 3 }}>
-                <Button color="secondary" className="circular-btn" fullWidth>
+                <Button
+                  color="secondary"
+                  className="circular-btn"
+                  fullWidth
+                  onClick={onCreateOrder}
+                  disabled={isPosting}
+                >
                   Confirmar Orden
                 </Button>
+                <Chip
+                  color="error"
+                  label={errorMessage}
+                  sx={{ display: errorMessage ? 'flex' : 'none', mt: 2 }}
+                />
               </Box>
             </CardContent>
           </Card>
