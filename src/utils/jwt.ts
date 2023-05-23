@@ -32,7 +32,9 @@ export const isValidToken = (token: string): Promise<string> => {
         resolve(_id)
       })
     } catch (error) {
-      reject('JWT no es válido')
+      console.log({error});
+      
+      reject('JWT no es válido Here')
     }
   })
 }

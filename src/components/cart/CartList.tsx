@@ -6,7 +6,6 @@ import {
   CardActionArea,
   CardMedia,
   Grid,
-  Link,
   Typography,
 } from '@mui/material'
 
@@ -32,7 +31,7 @@ export const CartList: FC<Props> = ({ editable = false }) => {
 
   return (
     <>
-      {cart.map((product, i) => (
+      {cart?.map((product, i) => (
         <Grid container spacing={2} key={`${product.slug}-${i}`} sx={{ mb: 1 }}>
           <Grid item xs={3}>
             {/* TODO: llevar a la página del producto */}

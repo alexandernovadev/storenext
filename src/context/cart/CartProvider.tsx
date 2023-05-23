@@ -2,7 +2,7 @@ import { useEffect, useReducer, useState } from 'react'
 import Cookie from 'js-cookie'
 
 import { ICartProduct } from '../../interfaces'
-import { CartContext, CartReducer } from './'
+import { CartContext, cartReducer } from './'
 
 export interface CartState {
   isLoaded: boolean
@@ -11,25 +11,40 @@ export interface CartState {
   subTotal: number
   tax: number
   total: number
+
+  shippingAddress?: ShippingAddress
+}
+
+export interface ShippingAddress {
+  firstName: string
+  lastName: string
+  address: string
+  address2?: string
+  zip: string
+  city: string
+  country: string
+  phone: string
 }
 
 const CART_INITIAL_STATE: CartState = {
-  isLoaded: true,
+  isLoaded: false,
   cart: [],
   numberOfItems: 0,
   subTotal: 0,
   tax: 0,
   total: 0,
+  shippingAddress: undefined,
 }
 
-interface Props {
+export const CartProvider = ({
+  children,
+}: {
   children: JSX.Element | JSX.Element[]
-}
+}) => {
+  const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE)
 
-export const CartProvider = ({ children }: Props) => {
-  const [state, dispatch] = useReducer(CartReducer, CART_INITIAL_STATE)
-
-  const [cookieLoaded, setCookieLoaded] = useState(false) // Nuevo estado para rastrear si la cookie ha cargado
+  // Nuevo estado para rastrear si la cookie ha cargado
+  const [cookieLoaded, setCookieLoaded] = useState(false)
 
   // Efecto para cargar la cookie
   useEffect(() => {
@@ -38,7 +53,6 @@ export const CartProvider = ({ children }: Props) => {
         ? JSON.parse(Cookie.get('cart')!)
         : []
 
-      // console.log('Leyendo las cookies', cookieProducts)
       dispatch({
         type: '[Cart] - LoadCart from cookies | storage',
         payload: cookieProducts,
@@ -49,7 +63,8 @@ export const CartProvider = ({ children }: Props) => {
         payload: [],
       })
     } finally {
-      setCookieLoaded(true) // Configuramos el estado a true una vez que la cookie ha cargado
+      // Configuramos el estado a true una vez que la cookie ha cargado
+      setCookieLoaded(true)
     }
   }, [])
 
@@ -57,10 +72,29 @@ export const CartProvider = ({ children }: Props) => {
   useEffect(() => {
     if (cookieLoaded) {
       // Solo guardamos la cookie si ya se ha cargado
-      // console.log('Guardando las cookies', state.cart)
       Cookie.set('cart', JSON.stringify(state.cart))
     }
-  }, [state.cart, cookieLoaded]) // Agregamos cookieLoaded como dependencia
+  }, [state.cart, cookieLoaded])
+
+  useEffect(() => {
+    if (Cookie.get('firstName')) {
+      const shippingAddress = {
+        firstName: Cookie.get('firstName') || '',
+        lastName: Cookie.get('lastName') || '',
+        address: Cookie.get('address') || '',
+        address2: Cookie.get('address2') || '',
+        zip: Cookie.get('zip') || '',
+        city: Cookie.get('city') || '',
+        country: Cookie.get('country') || '',
+        phone: Cookie.get('phone') || '',
+      }
+
+      dispatch({
+        type: '[Cart] - LoadAddress from Cookies',
+        payload: shippingAddress,
+      })
+    }
+  }, [])
 
   useEffect(() => {
     const numberOfItems = state.cart.reduce(
@@ -84,15 +118,6 @@ export const CartProvider = ({ children }: Props) => {
   }, [state.cart])
 
   const addProductToCart = (product: ICartProduct) => {
-    console.log('Añadiendo producto al carrito', product)
-    //! Nivel 1
-    // dispatch({ type: '[Cart] - Add Product', payload: product });
-
-    //! Nivel 2
-    // const productsInCart = state.cart.filter( p => p._id !== product._id && p.size !== product.size );
-    // dispatch({ type: '[Cart] - Add Product', payload: [...productsInCart, product] })
-
-    //! Nivel Final
     const productInCart = state.cart.some((p) => p._id === product._id)
     if (!productInCart)
       return dispatch({
@@ -109,12 +134,12 @@ export const CartProvider = ({ children }: Props) => {
         payload: [...state.cart, product],
       })
 
-    // Acumular
+    // Acumulate
     const updatedProducts = state.cart.map((p) => {
       if (p._id !== product._id) return p
       if (p.size !== product.size) return p
 
-      // Actualizar la cantidad
+      // Update Ammount
       p.quantity += product.quantity
       return p
     })
@@ -133,6 +158,19 @@ export const CartProvider = ({ children }: Props) => {
     dispatch({ type: '[Cart] - Remove product in cart', payload: product })
   }
 
+  const updateAddress = (address: ShippingAddress) => {
+    Cookie.set('firstName', address.firstName)
+    Cookie.set('lastName', address.lastName)
+    Cookie.set('address', address.address)
+    Cookie.set('address2', address.address2 || '')
+    Cookie.set('zip', address.zip)
+    Cookie.set('city', address.city)
+    Cookie.set('country', address.country)
+    Cookie.set('phone', address.phone)
+
+    dispatch({ type: '[Cart] - Update Address', payload: address })
+  }
+
   return (
     <CartContext.Provider
       value={{
@@ -142,6 +180,7 @@ export const CartProvider = ({ children }: Props) => {
         addProductToCart,
         removeCartProduct,
         updateCartQuantity,
+        updateAddress,
       }}
     >
       {children}

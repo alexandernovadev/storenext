@@ -1,22 +1,22 @@
-// import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-// import { jwt } from './utils'
+import { verify } from './utils/joseJwt'
 
-export async function middleware(req: NextRequest) {}
-// export async function middleware(req: NextRequest) {
-//   if (req.nextUrl.pathname.startsWith('/checkout/address')) {
-//     const token = req.cookies.get('token')?.value || ''
+export async function middleware(req: NextRequest) {
+  if (req.nextUrl.pathname.startsWith('/checkout')) {
+    const token = req.cookies.get('token')?.value.toString() || ''
 
-//     try {
-//       await jwt.isValidToken(token)
-//       return NextResponse.next()
-//     } catch (error) {
-//       const newUrl = new URL('/auth/login?p=/checkout/address', req.url)
-//       return NextResponse.redirect(newUrl)
-//     }
-//   }
-// }
+    try {
+      await verify(token)
+      return NextResponse.next()
+    } catch (error) {
+      return NextResponse.redirect(
+        new URL('/auth/login?p=/checkout/address', req.url),
+      )
+    }
+  }
+}
 
-// export const config = {
-//   matcher: '/checkout/:path*',
-// }
+export const config = {
+  matcher: '/checkout/:path*',
+}
