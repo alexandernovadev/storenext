@@ -38,7 +38,7 @@ const columns: GridColDef[] = [
 ]
 
 const rows = [
-  { id: 1, paid: true, fullname: 'Fernando Herrera' },
+  { id: "646d08dbb79cb9a62ea7f7dd", paid: true, fullname: 'Fernando Herrera' },
   { id: 2, paid: false, fullname: 'Melissa Flores' },
   { id: 3, paid: true, fullname: 'Hernando Vallejo' },
   { id: 4, paid: false, fullname: 'Emin Reyes' },

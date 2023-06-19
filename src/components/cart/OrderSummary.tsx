@@ -3,8 +3,21 @@ import { formatNumberToMiles } from '@/utils'
 import { Grid, Typography } from '@mui/material'
 import { useContext } from 'react'
 
-export const OrderSummary = () => {
-  const { total, tax, subTotal, numberOfItems } = useContext(CartContext)
+interface OrderSummaryProps {
+  order?: {
+    total: number
+    tax: number
+    subTotal: number
+    numberOfItems: number
+  } | null
+}
+
+export const OrderSummary = ({ order = null }: OrderSummaryProps) => {
+  const orderContextData = useContext(CartContext)
+
+  const { total, tax, subTotal, numberOfItems } = order
+    ? order
+    : orderContextData
 
   return (
     <Grid container>
