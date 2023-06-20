@@ -45,7 +45,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
     addProductToCart(tempCartProduct)
     push('/cart')
 
-    console.log(' Product : ', tempCartProduct.quantity)
+    // console.log(' Product : ', tempCartProduct.quantity)
   }
 
   return (

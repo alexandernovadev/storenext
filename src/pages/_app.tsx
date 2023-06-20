@@ -6,6 +6,7 @@ import { CssBaseline, ThemeProvider } from '@mui/material'
 import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
 import { SWRConfig } from 'swr'
+import { PayPalScriptProvider } from '@paypal/react-paypal-js'
 
 export default function App({
   Component,
@@ -13,23 +14,29 @@ export default function App({
 }: AppProps) {
   return (
     <SessionProvider session={session}>
-      <SWRConfig
-        value={{
-          fetcher: (resource, init) =>
-            fetch(resource, init).then((res) => res.json()),
+      <PayPalScriptProvider
+        options={{
+          clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
         }}
       >
-        <AuthProvider>
-          <CartProvider>
-            <UiProvider>
-              <ThemeProvider theme={darkgreenTheme}>
-                <CssBaseline />
-                <Component {...pageProps} />
-              </ThemeProvider>
-            </UiProvider>
-          </CartProvider>
-        </AuthProvider>
-      </SWRConfig>
+        <SWRConfig
+          value={{
+            fetcher: (resource, init) =>
+              fetch(resource, init).then((res) => res.json()),
+          }}
+        >
+          <AuthProvider>
+            <CartProvider>
+              <UiProvider>
+                <ThemeProvider theme={darkgreenTheme}>
+                  <CssBaseline />
+                  <Component {...pageProps} />
+                </ThemeProvider>
+              </UiProvider>
+            </CartProvider>
+          </AuthProvider>
+        </SWRConfig>
+      </PayPalScriptProvider>
     </SessionProvider>
   )
 }

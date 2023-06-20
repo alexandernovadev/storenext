@@ -100,27 +100,9 @@ export const getServerSideProps: GetServerSideProps = async ({
   // @ts-ignore
   const orders = await dbOrders.getOrdersByUser(session?.user._id.toString())
 
-  console.log({ orders })
+  // console.log({ orders })
 
-  // if (!orders) {
-  //   return {
-  //     redirect: {
-  //       destination: '/orders/history',
-  //       permanent: false,
-  //     },
-  //   }
-  // }
-
-  // // @ts-ignore
-  // if (order.user !== session.user._id) {
-  //   return {
-  //     redirect: {
-  //       destination: '/orders/history',
-  //       permanent: false,
-  //     },
-  //   }
-  // }
-
+ 
   return {
     props: {
       orders,

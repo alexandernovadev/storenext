@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
         },
       },
       async authorize(credentials) {
-        console.log({ credentials })
+        // console.log({ credentials })
         // return { name: 'Juan', correo: 'juan@google.com', role: 'admin' }
 
         return (await dbUsers.checkUserEmailPassword(
