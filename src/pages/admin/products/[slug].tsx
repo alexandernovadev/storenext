@@ -120,13 +120,9 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
   }
 
   const onFilesSelected = async ({ target }: ChangeEvent<HTMLInputElement>) => {
-    if (!target.files || target.files.length === 0) {
-      return
-    }
+    if (!target.files || target.files.length === 0) return
 
     try {
-      // @ts-ignore
-      console.log( file );
       // @ts-ignore
       for (const file of target.files) {
         const formData = new FormData()
@@ -215,6 +211,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               variant="filled"
               fullWidth
               multiline
+              rows={10}
               sx={{ mb: 1 }}
               {...register('description', {
                 required: 'Este campo es requerido',
