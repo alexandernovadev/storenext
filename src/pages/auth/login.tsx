@@ -20,6 +20,7 @@ import { getProviders, signIn } from 'next-auth/react'
 import { GetServerSideProps } from 'next'
 import { authOptions } from '../api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
+import { LogoMain } from '@/assets/LogoMain'
 
 interface FormData {
   email: string
@@ -67,6 +68,9 @@ const LoginPage = () => {
     <AuthLayout title={'Ingresar'}>
       <form onSubmit={handleSubmit(onLoginUser)} noValidate>
         <Box sx={{ width: 350, padding: '10px 20px' }}>
+          <Grid>
+            <LogoMain />
+          </Grid>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Typography variant="h1" component="h1">

@@ -15,14 +15,18 @@ const MenPage: NextPage = () => {
       title={'Teslo-Shop - Men'}
       description={'Encuentra los mejores productos de Teslo para ellos'}
     >
+      
       <Typography variant="h1" component="h1">
         Hombres
       </Typography>
+
       <Typography variant="h2" sx={{ mb: 1 }}>
         Productos para ellos
       </Typography>
 
+
       {isLoading ? <FullScreenLoading /> : <ProductList products={products} />}
+
     </ShopLayout>
   )
 }

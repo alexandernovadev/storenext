@@ -22,6 +22,7 @@ import logoshop from '../../assets/logoshop.png'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { CartContext, UiContext } from '@/context'
+import { LogoMainTwo } from '@/assets/LogoMainTwo'
 
 const routesCategory = [
   {
@@ -59,25 +60,14 @@ export const Navbar = () => {
   return (
     <AppBar>
       <Toolbar>
-        <NextLink
-          href="/"
-          style={{
-            textDecoration: 'none',
-            color: 'black',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-          }}
-        >
-          <Image
-            src={logoshop}
-            width={30}
-            height={35}
-            alt="Picture of the author"
-          />
-          <Typography variant="h1" component={'h1'}>
-            Store
-          </Typography>
+        <NextLink href="/">
+       
+            <LogoMainTwo 
+            style={{
+              position:'relative',
+              width:'160px',
+              top:'8px'
+            }}/>
         </NextLink>
 
         <Box flex={1} />
@@ -145,7 +135,10 @@ export const Navbar = () => {
         </IconButton>
         <NextLink href="/cart">
           <IconButton>
-            <Badge badgeContent={numberOfItems > 9 ? '9+':numberOfItems } color="secondary">
+            <Badge
+              badgeContent={numberOfItems > 9 ? '9+' : numberOfItems}
+              color="secondary"
+            >
               <ShoppingCartOutlined />
             </Badge>
           </IconButton>

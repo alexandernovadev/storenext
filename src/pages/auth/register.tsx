@@ -15,6 +15,7 @@ import { useContext, useState } from 'react'
 import { AuthContext } from '@/context'
 import { validations } from '@/utils'
 import { ErrorOutline } from '@mui/icons-material'
+import { LogoMain } from '@/assets/LogoMain'
 
 interface FormData {
   name: string
@@ -55,6 +56,9 @@ const RegisterPage = () => {
     <AuthLayout title={'Ingresar'}>
       <form onSubmit={handleSubmit(onRegisterUser)} noValidate>
         <Box sx={{ width: 350, padding: '10px 20px' }}>
+          <Grid>
+            <LogoMain />
+          </Grid>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Typography variant="h1" component="h1">

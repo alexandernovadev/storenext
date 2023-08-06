@@ -4,6 +4,7 @@ import NextLink from 'next/link'
 import { AppBar, Box, Button, Link, Toolbar, Typography } from '@mui/material'
 
 import { UiContext } from '../../context'
+import { LogoMainTwo } from '@/assets/LogoMainTwo'
 
 export const AdminNavbar = () => {
   const { toggleSideMenu } = useContext(UiContext)
@@ -13,8 +14,14 @@ export const AdminNavbar = () => {
       <Toolbar>
         <NextLink href="/" passHref>
           <Box display="flex" alignItems="center">
-            <Typography variant="h6">Teslo |</Typography>
-            <Typography sx={{ ml: 0.5 }}>Shop</Typography>
+      
+          <LogoMainTwo 
+            style={{
+              position:'relative',
+              width:'160px',
+              top:'8px'
+            }}/>
+   
           </Box>
         </NextLink>
 
