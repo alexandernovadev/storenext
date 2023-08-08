@@ -93,6 +93,15 @@ export const lightTheme = createTheme({
       return '#000000'
     },
   },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 960,
+      lg: 1080,
+      xl: 1920,
+    },
+  },
   components: {
     MuiLink: {
       defaultProps: {
@@ -108,9 +117,9 @@ export const lightTheme = createTheme({
         root: {
           backgroundColor: 'white',
           height: 60,
-          display:'flex',
-          justifyContent:'center',
-          alignItems:'center'
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         },
       },
     },

@@ -9,6 +9,7 @@ import {
   Link,
   Toolbar,
   Typography,
+  styled,
 } from '@mui/material'
 import React, { useContext, useMemo, useState } from 'react'
 
@@ -24,7 +25,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { CartContext, UiContext } from '@/context'
 import { LogoMainTwo } from '@/assets/LogoMainTwo'
-
+import MenuIcon from '@mui/icons-material/Menu'
 import logo from '@/assets/logotemp.png'
 const routesCategory = [
   {
@@ -59,20 +60,26 @@ export const Navbar = () => {
     return (url: string) => (router.pathname === url ? 'primary' : 'info')
   }, [router.pathname])
 
+  const StyledBox = styled(Box)(({ theme }) => ({
+    height: '100%',
+    margin: '80px auto',
+    maxWidth: '1080px',
+    width: '1080px',
+    padding: '0px 30px',
+    display: 'flex',
+    justifyContent: 'space-between',
+
+    [theme.breakpoints.down('lg')]: {
+      width: '100vw',
+      justifyContent: 'space-between',
+      maxWidth: '100%',
+    },
+  }))
+
   return (
     <AppBar>
       <Toolbar>
-        <Box
-          sx={{
-            Height: '100%',
-            margin: '80px auto',
-            maxWidth: '1080px',
-            width: '1080px',
-            padding: '0px 30px',
-            display: 'flex',
-            justifyContent:'space-between'
-          }}
-        >
+        <StyledBox>
           <Box sx={{}}>
             <NextLink href="/">
               <Image src={logo} width={180} alt="Picture of the author" />
@@ -81,7 +88,7 @@ export const Navbar = () => {
 
           <Box
             sx={{
-              display: isSearchVisible ? 'none' : { xs: 'none', sm: 'flex' },
+              display: isSearchVisible ? 'none' : { xs: 'none', lg: 'flex' },
               justifyContent: 'center',
               alignItems: 'center',
             }}
@@ -163,9 +170,11 @@ export const Navbar = () => {
               </IconButton>
             </NextLink>
 
-            <Button onClick={toggleSideMenu}>Menú</Button>
+            <IconButton onClick={toggleSideMenu}>
+              <MenuIcon />
+            </IconButton>
           </Box>
-        </Box>
+        </StyledBox>
       </Toolbar>
     </AppBar>
   )
