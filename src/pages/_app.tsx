@@ -1,7 +1,7 @@
 import { AuthProvider, CartProvider, UiProvider } from '@/context'
 import '@/styles/globals.css'
 import { lightTheme } from '@/themes'
-import { darkgreenTheme } from '@/themes/darkgreen-theme'
+// import { darkgreenTheme } from '@/themes/darkgreen-theme'
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
@@ -28,7 +28,7 @@ export default function App({
           <AuthProvider>
             <CartProvider>
               <UiProvider>
-                <ThemeProvider theme={darkgreenTheme}>
+                <ThemeProvider theme={lightTheme}>
                   <CssBaseline />
                   <Component {...pageProps} />
                 </ThemeProvider>

@@ -15,6 +15,7 @@ import React, { useContext, useMemo, useState } from 'react'
 import NextLink from 'next/link'
 import {
   ClearOutlined,
+  Height,
   SearchOutlined,
   ShoppingCartOutlined,
 } from '@mui/icons-material'
@@ -24,6 +25,7 @@ import { useRouter } from 'next/router'
 import { CartContext, UiContext } from '@/context'
 import { LogoMainTwo } from '@/assets/LogoMainTwo'
 
+import logo from '@/assets/logotemp.png'
 const routesCategory = [
   {
     href: '/category/men',
@@ -60,91 +62,110 @@ export const Navbar = () => {
   return (
     <AppBar>
       <Toolbar>
-        <NextLink href="/">
-       
-            <LogoMainTwo 
-            style={{
-              position:'relative',
-              width:'160px',
-              top:'8px'
-            }}/>
-        </NextLink>
-
-        <Box flex={1} />
-
         <Box
           sx={{
-            display: isSearchVisible ? 'none' : { xs: 'none', sm: 'block' },
+            Height: '100%',
+            margin: '80px auto',
+            maxWidth: '1080px',
+            width: '1080px',
+            padding: '0px 30px',
+            display: 'flex',
+            justifyContent:'space-between'
           }}
-          className="fadeIn"
         >
-          {routesCategory.map(({ href, name }) => (
-            <NextLink href={href} key={String(href)} style={{ marginLeft: 3 }}>
-              <Button
-                color={isActive(href)}
-                sx={{
-                  '&:hover': {
-                    backgroundColor:
-                      isActive(href) === 'primary' ? 'black' : undefined,
-                    color: isActive(href) === 'primary' ? 'white' : undefined,
-                  },
-                }}
-              >
-                {name}
-              </Button>
+          <Box sx={{}}>
+            <NextLink href="/">
+              <Image src={logo} width={180} alt="Picture of the author" />
             </NextLink>
-          ))}
-        </Box>
+          </Box>
 
-        <Box flex={1} />
-        {/* Pantallas pantallas grandes */}
-        {isSearchVisible ? (
-          <Input
-            sx={{ display: { xs: 'none', sm: 'flex' } }}
+          <Box
+            sx={{
+              display: isSearchVisible ? 'none' : { xs: 'none', sm: 'flex' },
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
             className="fadeIn"
-            autoFocus
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyPress={(e) => (e.key === 'Enter' ? onSearchTerm() : null)}
-            type="text"
-            placeholder="Buscar..."
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton onClick={() => setIsSearchVisible(false)}>
-                  <ClearOutlined />
-                </IconButton>
-              </InputAdornment>
-            }
-          />
-        ) : (
-          <IconButton
-            onClick={() => setIsSearchVisible(true)}
-            className="fadeIn"
-            sx={{ display: { xs: 'none', sm: 'flex' } }}
           >
-            <SearchOutlined />
-          </IconButton>
-        )}
+            {routesCategory.map(({ href, name }) => (
+              <NextLink
+                href={href}
+                key={String(href)}
+                style={{ marginLeft: 3 }}
+              >
+                <Button
+                  color={isActive(href)}
+                  sx={{
+                    '&:hover': {
+                      backgroundColor:
+                        isActive(href) === 'primary' ? 'black' : undefined,
+                      color: isActive(href) === 'primary' ? 'white' : undefined,
+                    },
+                  }}
+                >
+                  {name}
+                </Button>
+              </NextLink>
+            ))}
+          </Box>
 
-        {/* Pantallas pequeñas */}
-        <IconButton
-          sx={{ display: { xs: 'flex', sm: 'none' } }}
-          onClick={toggleSideMenu}
-        >
-          <SearchOutlined />
-        </IconButton>
-        <NextLink href="/cart">
-          <IconButton>
-            <Badge
-              badgeContent={numberOfItems > 9 ? '9+' : numberOfItems}
-              color="secondary"
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {isSearchVisible ? (
+              <Input
+                sx={{ display: { xs: 'none', sm: 'flex' } }}
+                className="fadeIn"
+                autoFocus
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyPress={(e) => (e.key === 'Enter' ? onSearchTerm() : null)}
+                type="text"
+                placeholder="Buscar..."
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setIsSearchVisible(false)}>
+                      <ClearOutlined />
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            ) : (
+              <IconButton
+                onClick={() => setIsSearchVisible(true)}
+                className="fadeIn"
+                sx={{ display: { xs: 'none', sm: 'flex' } }}
+              >
+                <SearchOutlined />
+              </IconButton>
+            )}
+
+            {/* Pantallas pequeñas */}
+            <IconButton
+              sx={{ display: { xs: 'flex', sm: 'none' } }}
+              onClick={toggleSideMenu}
             >
-              <ShoppingCartOutlined />
-            </Badge>
-          </IconButton>
-        </NextLink>
+              <SearchOutlined />
+            </IconButton>
 
-        <Button onClick={toggleSideMenu}>Menú</Button>
+            <NextLink href="/cart">
+              <IconButton>
+                <Badge
+                  badgeContent={numberOfItems > 9 ? '9+' : numberOfItems}
+                  color="secondary"
+                >
+                  <ShoppingCartOutlined />
+                </Badge>
+              </IconButton>
+            </NextLink>
+
+            <Button onClick={toggleSideMenu}>Menú</Button>
+          </Box>
+        </Box>
       </Toolbar>
     </AppBar>
   )
