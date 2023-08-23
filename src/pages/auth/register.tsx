@@ -1,21 +1,16 @@
 import NextLink from 'next/link'
-import {
-  Box,
-  Button,
-  Chip,
-  Grid,
-  Link,
-  TextField,
-  Typography,
-} from '@mui/material'
-import { AuthLayout } from '../../components/layouts'
+import { Box, Button, Chip, Grid, TextField, Typography } from '@mui/material'
+
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
 import { useContext, useState } from 'react'
 import { AuthContext } from '@/context'
 import { validations } from '@/utils'
 import { ErrorOutline } from '@mui/icons-material'
-import { LogoMain } from '@/assets/LogoMain'
+import logotemp from '@/assets/logotemp.png'
+import Image from 'next/image'
+
+import { AuthLayout } from '@/components/layouts/AuthLayout/AuthLayout'
 
 interface FormData {
   name: string
@@ -57,9 +52,9 @@ const RegisterPage = () => {
       <form onSubmit={handleSubmit(onRegisterUser)} noValidate>
         <Box sx={{ width: 350, padding: '10px 20px' }}>
           <Grid>
-            <LogoMain />
+            <Image src={logotemp} alt="aa" />
           </Grid>
-          <Grid container spacing={2}>
+          <Grid container spacing={2} paddingTop={8}>
             <Grid item xs={12}>
               <Typography variant="h1" component="h1">
                 Crear cuenta

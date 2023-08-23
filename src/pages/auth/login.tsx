@@ -9,7 +9,6 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { AuthLayout } from '@/components/layouts'
 import { useForm } from 'react-hook-form'
 import { validations } from '@/utils'
 import { useContext, useEffect, useState } from 'react'
@@ -20,7 +19,9 @@ import { getProviders, signIn } from 'next-auth/react'
 import { GetServerSideProps } from 'next'
 import { authOptions } from '../api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
-import { LogoMain } from '@/assets/LogoMain'
+import logotemp  from '@/assets/logotemp.png'
+import { AuthLayout } from '@/components/layouts/AuthLayout/AuthLayout'
+import Image from 'next/image'
 
 interface FormData {
   email: string
@@ -69,9 +70,9 @@ const LoginPage = () => {
       <form onSubmit={handleSubmit(onLoginUser)} noValidate>
         <Box sx={{ width: 350, padding: '10px 20px' }}>
           <Grid>
-            <LogoMain />
+            <Image src={logotemp} alt="" />
           </Grid>
-          <Grid container spacing={2}>
+          <Grid container spacing={2} paddingTop={8}>
             <Grid item xs={12}>
               <Typography variant="h1" component="h1">
                 Iniciar Sesión
