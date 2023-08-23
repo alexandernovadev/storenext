@@ -18,7 +18,8 @@ const columns: GridColDef[] = [
             component="img"
             alt={row.title}
             className="fadeIn"
-            image={row.img}
+            // No deberia ser asi
+            image={String(row.img).replace('undefined','/')}
           />
         </a>
       )
