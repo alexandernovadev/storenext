@@ -173,5 +173,15 @@ export const lightTheme = createTheme({
         },
       },
     },
+
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          ':hover *': {
+            color: '#e1e1e1',
+          },
+        },
+      },
+    },
   },
 })
