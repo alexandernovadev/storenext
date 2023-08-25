@@ -1,8 +1,11 @@
+version: '4'
 services:
-  shopnext:
-    image: mongo:5.0.0
-    container_name: nextshop-database
+  shopnext-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nextshop-app
     ports:
-      - 27017:27017
+      - "3000:3000"
     volumes:
-      - ./mongo:/data/db
+      - ./src:/app
