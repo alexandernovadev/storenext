@@ -52,3 +52,9 @@
 .css-1b9l5og-MuiDataGrid-root .MuiDataGrid-row:hover > a * {
   color: aliceblue;
 }
+
+
+.breadcuma_anchor {
+  color: black;
+  font-style: italic;
+}
