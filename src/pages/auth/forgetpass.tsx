@@ -1,9 +1,18 @@
 import { AuthLayout } from '@/components/layouts'
-import { generateCodeRandPass } from '@/utils/createRandNumbeCode'
-import { Box, Button, Grid, TextField, Typography } from '@mui/material'
-import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import {
+  Box,
+  Button,
+  Grid,
+  Stepper,
+  Step,
+  StepLabel,
+  Typography,
+  TextField,
+} from '@mui/material'
 import { useForm, FormProvider } from 'react-hook-form'
+import React, { useState } from 'react'
+import { useRouter } from 'next/router'
+import { generateCodeRandPass } from '@/utils/createRandNumbeCode'
 
 interface FormData {
   email: string
@@ -12,22 +21,21 @@ interface FormData {
 }
 
 const ForgetpasswordPage = () => {
-  const methods = useForm<FormData>()
+  const methods = useForm<FormData>({ shouldUnregister: false })
   const {
     handleSubmit,
     formState: { errors },
     register,
     watch,
   } = methods
-
   const emailWatched = watch('email')
   const coeWatched = watch('code')
 
   const router = useRouter()
-  const [stepForgetPass, setStepForgetPass] = useState<
-    'mail' | 'code' | 'resetpass'
-  >('mail')
+  const [activeStep, setActiveStep] = useState(0)
+  const steps = ['Enter Email', 'Verify Code', 'Reset Password']
   const [isValidEmail, setIsValidEmail] = useState(true)
+  const [isValidCode, setIsValidCode] = useState(true)
 
   const onSubmitEmail = async ({ email }: FormData) => {
     setIsValidEmail(true)
@@ -67,7 +75,7 @@ const ForgetpasswordPage = () => {
           })
 
           const dataSenmail = await responseSend.json()
-          setStepForgetPass('code')
+          handleNext()
 
           console.log('dataSenmail ', dataSenmail)
         }
@@ -84,6 +92,7 @@ const ForgetpasswordPage = () => {
   const onSubmitCode = async ({ code }: FormData) => {
     // Logic for submitting code
     console.log('here code')
+    setIsValidCode(true)
 
     try {
       const response = await fetch('/api/forgetpass/verifycode', {
@@ -92,10 +101,13 @@ const ForgetpasswordPage = () => {
         body: JSON.stringify({ email: emailWatched, code: coeWatched }),
       })
       if (response.ok) {
-        setStepForgetPass('resetpass')
+        handleNext()
+      } else {
+        setIsValidCode(false)
       }
     } catch (error) {
       console.log('dataR ', error)
+      setIsValidCode(false)
     } finally {
       console.log('FINAL')
     }
@@ -106,12 +118,22 @@ const ForgetpasswordPage = () => {
     console.log('here password')
   }
 
-  const renderForm = () => {
-    switch (stepForgetPass) {
-      case 'mail':
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1)
+  }
+
+  const handleReset = () => {
+    setActiveStep(0)
+  }
+
+  const StepContent = ({ stepIndex }: { stepIndex: number }) => {
+    switch (stepIndex) {
+      // Implement your form rendering logic based on the stepIndex
+      // Here you render your form based on the stepIndex
+      case 0:
         return (
           <form onSubmit={handleSubmit(onSubmitEmail)} noValidate>
-            <Typography variant="body1" component="h1" sx={{ pt: 4 }}>
+            <Typography variant="body1" component="h1" sx={{ py: 4 }}>
               Escribe el correo con el que te encuentras registrado
             </Typography>
             <TextField
@@ -122,6 +144,7 @@ const ForgetpasswordPage = () => {
               variant="filled"
               fullWidth
               helperText={errors.email?.message}
+              sx={{ mb: 2 }}
             />
             {!isValidEmail && (
               <span style={{ color: 'red' }}>
@@ -129,15 +152,14 @@ const ForgetpasswordPage = () => {
               </span>
             )}
             <Button type="submit" color="primary" fullWidth>
-              Enviar enlace de recuperación
+              Enviar correo de recuperación
             </Button>
           </form>
         )
-
-      case 'code':
+      case 1:
         return (
           <form onSubmit={handleSubmit(onSubmitCode)} noValidate>
-            <Typography variant="body1" component="h1" sx={{ pt: 4 }}>
+            <Typography variant="body1" component="h1" sx={{ py: 4 }}>
               Escribe el código que te enviamos al correo
             </Typography>
             <TextField
@@ -148,14 +170,20 @@ const ForgetpasswordPage = () => {
               variant="filled"
               fullWidth
               helperText={errors.code?.message}
+              sx={{ mb: 2 }}
             />
+
+            {!isValidCode && (
+              <span style={{ color: 'red' }}>El code no es valido</span>
+            )}
             <Button type="submit" color="primary" fullWidth>
               Verificar Código
             </Button>
           </form>
         )
+      case 2:
+        const hasNumber = /\d/
 
-      case 'resetpass':
         return (
           <form onSubmit={handleSubmit(onSubmitPassword)} noValidate>
             <Typography variant="body1" component="h1" sx={{ pt: 4 }}>
@@ -164,11 +192,19 @@ const ForgetpasswordPage = () => {
             <TextField
               {...register('password', {
                 required: 'El campo de contraseña es requerido',
+                minLength: {
+                  value: 5,
+                  message: 'La contraseña debe tener al menos 5 caracteres',
+                },
+                validate: (value) =>
+                  hasNumber.test(value) ||
+                  'La contraseña debe contener al menos un número',
               })}
               label="Contraseña"
               variant="filled"
               fullWidth
               type="password"
+              error={!!errors.password}
               helperText={errors.password?.message}
             />
             <Button type="submit" color="primary" fullWidth>
@@ -176,9 +212,8 @@ const ForgetpasswordPage = () => {
             </Button>
           </form>
         )
-
       default:
-        return null
+        return <>Eror Step </>
     }
   }
 
@@ -187,11 +222,20 @@ const ForgetpasswordPage = () => {
       <Box sx={{ width: 350, padding: '10px 20px' }}>
         <Grid container spacing={2} paddingTop={8}>
           <Grid item xs={12}>
-            <Typography variant="h1" component="h1">
+            <Typography variant="h1" component="h1" sx={{ py: 4 }}>
               Recuperar Contraseña
             </Typography>
           </Grid>
-          <FormProvider {...methods}>{renderForm()}</FormProvider>
+          <Stepper activeStep={activeStep} alternativeLabel>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+          <FormProvider {...methods}>
+            <StepContent stepIndex={activeStep} />
+          </FormProvider>
         </Grid>
       </Box>
     </AuthLayout>
