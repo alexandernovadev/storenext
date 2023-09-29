@@ -1,5 +1,13 @@
 import NextLink from 'next/link'
-import { Box, Button, Chip, Grid, TextField, Typography } from '@mui/material'
+import {
+  Box,
+  Breadcrumbs,
+  Button,
+  Chip,
+  Grid,
+  TextField,
+  Typography,
+} from '@mui/material'
 
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
@@ -55,6 +63,18 @@ const RegisterPage = () => {
             <Image src={logotemp} alt="aa" />
           </Grid>
           <Grid container spacing={2} paddingTop={8}>
+            <Grid item xs={12}>
+              <Breadcrumbs aria-label="breadcrumb">
+                <NextLink
+                  href={`/auth/login?p=${destinaion}`}
+                  passHref
+                  className="breadcuma_anchor"
+                >
+                  Login
+                </NextLink>
+                <Typography color="text.primary">Crear Cuenta</Typography>
+              </Breadcrumbs>
+            </Grid>
             <Grid item xs={12}>
               <Typography variant="h1" component="h1">
                 Crear cuenta
@@ -126,12 +146,6 @@ const RegisterPage = () => {
               >
                 Registrar
               </Button>
-            </Grid>
-
-            <Grid item xs={12} display="flex" justifyContent="end">
-              <NextLink href={`/auth/login?p=${destinaion}`} passHref>
-                ¿Ya tienes cuenta?
-              </NextLink>
             </Grid>
           </Grid>
         </Box>

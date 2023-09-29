@@ -49,8 +49,23 @@ export async function middleware(req: NextRequest) {
 
     return NextResponse.next()
   }
+  if (req.nextUrl.pathname.startsWith('/auth')) {
+    console.log('entoooo')
+
+    const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+    console.log(session)
+
+    if (session) {
+      const requestedPage = req.nextUrl.pathname
+      const url = req.nextUrl.clone()
+      url.pathname = ``
+      return NextResponse.redirect(url)
+    }
+
+    return NextResponse.next()
+  }
 }
 
 export const config = {
-  matcher: ['/checkout/:path*', '/admin/:path*'],
+  matcher: ['/checkout/:path*', '/admin/:path*', '/auth/:path*'],
 }

@@ -1,6 +1,7 @@
 import NextLink from 'next/link'
 import {
   Box,
+  Breadcrumbs,
   Button,
   Chip,
   Divider,
@@ -15,13 +16,14 @@ import { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { AuthContext } from '@/context'
 import { ErrorOutline } from '@mui/icons-material'
-import { getProviders, signIn } from 'next-auth/react'
-import { GetServerSideProps } from 'next'
-import { authOptions } from '../api/auth/[...nextauth]'
-import { getServerSession } from 'next-auth/next'
-import logotemp  from '@/assets/logotemp.png'
+import { getProviders, getSession, signIn } from 'next-auth/react'
+// import { GetServerSideProps } from 'next'
+// import { authOptions } from '../api/auth/[...nextauth]'
+// import { getServerSession } from 'next-auth/next'
+import logotemp from '@/assets/logotemp.png'
 import { AuthLayout } from '@/components/layouts/AuthLayout/AuthLayout'
 import Image from 'next/image'
+import ReCAPTCHA from 'react-google-recaptcha'
 
 interface FormData {
   email: string
@@ -44,6 +46,7 @@ const LoginPage = () => {
   const [showError, setShowError] = useState(false)
 
   const [providers, setProviders] = useState<any>({})
+  const [isCheckCaptcha, setIsCheckCaptcha] = useState(false)
 
   useEffect(() => {
     getProviders().then((prov) => setProviders(prov))
@@ -51,20 +54,12 @@ const LoginPage = () => {
 
   const onLoginUser = async ({ email, password }: FormData) => {
     setShowError(false)
-
-    // const isValidLogin = await loginUser(email, password)
-
-    // if (!isValidLogin) {
-    //   setShowError(true)
-    //   setTimeout(() => setShowError(false), 3000)
-    //   return
-    // }
-
-    // // Pantalla que el usuario estaba
-    // router.replace(destinaion)
-
     await signIn('credentials', { email, password })
   }
+  const handleChange = (e: any) => {
+    setIsCheckCaptcha(true)
+  }
+
   return (
     <AuthLayout title={'Ingresar'}>
       <form onSubmit={handleSubmit(onLoginUser)} noValidate>
@@ -73,6 +68,18 @@ const LoginPage = () => {
             <Image src={logotemp} alt="" />
           </Grid>
           <Grid container spacing={2} paddingTop={8}>
+            <Grid item xs={12}>
+              <Breadcrumbs aria-label="breadcrumb">
+                <Typography color="text.primary">Login</Typography>
+                <NextLink
+                  href={`/auth/register?p=${destinaion}`}
+                  passHref
+                  className="breadcuma_anchor"
+                >
+                  Crear Cuenta
+                </NextLink>
+              </Breadcrumbs>
+            </Grid>
             <Grid item xs={12}>
               <Typography variant="h1" component="h1">
                 Iniciar Sesión
@@ -116,6 +123,13 @@ const LoginPage = () => {
                 type="password"
                 variant="filled"
                 fullWidth
+                sx={{ mb: 2 }}
+              />
+
+              {/*@ts-ignore*/}
+              <ReCAPTCHA
+                sitekey="6LfaaWAoAAAAAInGTswtHeku1gYfGXBX70LhLzEI"
+                onChange={handleChange}
               />
             </Grid>
 
@@ -126,14 +140,27 @@ const LoginPage = () => {
                 className="circular-btn"
                 size="large"
                 fullWidth
+                disabled={
+                  !isCheckCaptcha || !!errors.password || !!errors.email
+                }
               >
                 Ingresar
               </Button>
             </Grid>
 
-            <Grid item xs={12} display="flex" justifyContent="end">
-              <NextLink href={`/auth/register?p=${destinaion}`} passHref>
-                ¿No tienes cuenta?
+            <Grid
+              item
+              xs={12}
+              display="flex"
+              alignItems="end"
+              flexDirection={'column'}
+            >
+              <NextLink
+                href={`/auth/forgetpass`}
+                passHref
+                className="breadcuma_anchor"
+              >
+                Olvide mi contraseña
               </NextLink>
             </Grid>
           </Grid>
@@ -170,28 +197,28 @@ const LoginPage = () => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({
-  req,
-  res,
-  query,
-}) => {
-  const session = await getServerSession(req, res, authOptions)
-  // const session = await getSession({ req })
+// export const getServerSideProps: GetServerSideProps = async ({
+//   req,
+//   res,
+//   query,
+// }) => {
+//   const session = await getServerSession(req, res, authOptions)
+//   // const session = await getSession({ req })
 
-  const { p = '/' } = query
+//   const { p = '/' } = query
 
-  if (session) {
-    return {
-      redirect: {
-        destination: p.toString(),
-        permanent: false,
-      },
-    }
-  }
+//   if (session) {
+//     return {
+//       redirect: {
+//         destination: p.toString(),
+//         permanent: false,
+//       },
+//     }
+//   }
 
-  return {
-    props: {},
-  }
-}
+//   return {
+//     props: {},
+//   }
+// }
 
 export default LoginPage
