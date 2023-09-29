@@ -18,6 +18,10 @@ export default async function handler(
   await db.connect()
 
   try {
+    // Buscar y eliminar todos los ResetPassword existentes para el email proporcionado
+    await ResetPassword.deleteMany({ email })
+
+    // Crear un nuevo ResetPassword
     const resetPassword = new ResetPassword({
       email,
       expire,
@@ -28,9 +32,9 @@ export default async function handler(
 
     return res
       .status(201)
-      .json({ message: 'ResetPassword creado exitosamente' })
+      .json({ status: true, message: 'ResetPassword creado exitosamente' })
   } catch (error) {
-    console.error('Error creando ResetPassword:', error)
+    console.error('Error manejando ResetPassword:', error)
     return res.status(500).json({ message: 'Error interno del servidor' })
   } finally {
     await db.disconnect()

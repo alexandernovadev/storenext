@@ -11,9 +11,9 @@ export default async function handler(
   }
 
   // Recuperar el email del cuerpo de la solicitud
-  const { email } = req.body
-  if (!email) {
-    return res.status(400).json({ message: 'Email is required' }) // 400 Bad Request
+  const { email, code } = req.body
+  if (!email && !code) {
+    return res.status(400).json({ message: 'Email and Code is required' }) // 400 Bad Request
   }
 
   try {
@@ -33,8 +33,8 @@ export default async function handler(
       subject: 'Recuperación de Contraseña',
       html: `
       <h1>Recuperación de Contraseña</h1>
-      <p>Para recuperar tu contraseña, por favor haz click en el siguiente enlace:</p>
-      <a href="https://tusitio.com/recuperar-contrasena/${email}">Recuperar Contraseña</a>
+      <p>Para recuperar tu contraseña, por favor digita este numero es la App</p>
+      <b>${code}</b>
     `,
     }
 

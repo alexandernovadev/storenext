@@ -19,6 +19,8 @@ export default async function handler(
   try {
     const resetPassword = await ResetPassword.findOne({ email, code })
 
+    console.log(resetPassword);
+    
     if (!resetPassword)
       return res
         .status(404)
