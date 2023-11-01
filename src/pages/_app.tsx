@@ -30,6 +30,7 @@ export default function App({
               <UiProvider>
                 <ThemeProvider theme={lightTheme}>
                   <CssBaseline />
+                  {/*@ts-ignore*/}
                   <Component {...pageProps} />
                 </ThemeProvider>
               </UiProvider>
