@@ -8,6 +8,8 @@ import 'slick-carousel/slick/slick-theme.css'
 import { verify } from 'crypto'
 import CloseIcon from '@mui/icons-material/Close'
 import CheckIcon from '@mui/icons-material/Check'
+import { Button } from '@mui/material'
+import { purple } from '@mui/material/colors'
 
 interface Option {
   name: string
@@ -34,6 +36,7 @@ const QuestionAppPage = () => {
   const [exam, setExam] = useState<Exam>()
   const [loading, setLoading] = useState(true)
   const [isShowResult, setIsShowResult] = useState(false)
+  const [timeEnds, setTimeEnds] = useState(false)
   const [results, setResults] = useState({
     result: 0,
     corrects: '3/3',
@@ -49,6 +52,13 @@ const QuestionAppPage = () => {
   }>({})
 
   const [ipUsuario, setIpUsuario] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (timeLeft < 1) {
+      verifyOptions()
+      setTimeEnds(true)
+    }
+  }, [timeLeft])
 
   useEffect(() => {
     const fetchIp = async () => {
@@ -112,10 +122,6 @@ const QuestionAppPage = () => {
       ...prev,
       [questionName]: answerId,
     }))
-  }
-
-  const handleSubmit = () => {
-    console.log(userAnswers)
   }
 
   const settings = {
@@ -202,6 +208,15 @@ const QuestionAppPage = () => {
         padding: 24,
       }}
     >
+      {timeEnds && (
+        <h1
+          style={{
+            color: '#d8432c',
+          }}
+        >
+          <b>"Se acabo el time"</b>{' '}
+        </h1>
+      )}
       <h1>Exam Questions</h1>
       <h2>{formatTime(timeLeft)} / 5:00</h2>
 
@@ -234,6 +249,7 @@ const QuestionAppPage = () => {
                   name={q.name}
                   onChange={() => handleAnswerChange(q.name, option.id)}
                   checked={userAnswers[q.name] === option.id}
+                  disabled={isShowResult}
                 />
                 <label
                   className="radioLabel"
@@ -246,38 +262,47 @@ const QuestionAppPage = () => {
                     }}
                   >
                     <span>{option.name}</span>
-                    <span>
-                      {option.id !== q.correct ? (
-                        <CloseIcon sx={{ color: 'red' }} />
-                      ) : (
-                        <CheckIcon sx={{ color: 'green' }} />
-                      )}
-                    </span>
+                    {isShowResult && (
+                      <span>
+                        {option.id !== q.correct ? (
+                          <CloseIcon sx={{ color: 'red' }} />
+                        ) : (
+                          <CheckIcon sx={{ color: 'green' }} />
+                        )}
+                      </span>
+                    )}
                   </div>
                 </label>
               </div>
             ))}
-            {/** @ts-ignore */}
-            <button onClick={() => sliderRef.current?.slickNext()}>here</button>
+            <Button
+              style={{
+                background: 'purple',
+                color: 'white',
+              }}
+              // @ts-ignore
+              onClick={() => sliderRef.current?.slickNext()}
+            >
+              Siguiente
+            </Button>
           </div>
         ))}
       </Slider>
 
       <br />
       <div>
-        <button
+      {!timeEnds && (
+        <Button
           onClick={verifyOptions}
-          // disabled={timeUp}
+          variant="outlined"
+          style={{
+            background: 'blue',
+          }}
+          disabled={timeLeft < 0 || isShowResult}
         >
-          Test
-        </button>
-
-        <button
-          onClick={handleSubmit}
-          // disabled={timeUp}
-        >
-          Submit
-        </button>
+          Enviar Test
+        </Button>
+        )}
       </div>
     </div>
   )
