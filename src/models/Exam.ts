@@ -6,6 +6,14 @@ const examSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  timeLimit: {
+    type: Number,
+    required: true,
+  },
+  timeUser:{
+    type: String,
+    required: true,
+  },
   fechaHoraInicio: {
     type: Date,
     required: true,

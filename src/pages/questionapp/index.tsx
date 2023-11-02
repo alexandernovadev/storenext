@@ -33,6 +33,12 @@ interface Exam {
 const QuestionAppPage = () => {
   const [exam, setExam] = useState<Exam>()
   const [loading, setLoading] = useState(true)
+  const [isShowResult, setIsShowResult] = useState(false)
+  const [results, setResults] = useState({
+    result: 0,
+    corrects: '3/3',
+  })
+
   const [error, setError] = useState(null)
   const [timeLeft, setTimeLeft] = useState<number>(300)
 
@@ -41,6 +47,22 @@ const QuestionAppPage = () => {
   const [userAnswers, setUserAnswers] = useState<{
     [questionName: string]: string
   }>({})
+
+  const [ipUsuario, setIpUsuario] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchIp = async () => {
+      try {
+        const response = await fetch('https://api.ipify.org?format=json')
+        const data = await response.json()
+        setIpUsuario(data.ip)
+      } catch (err: any) {
+        console.error('Error fetching IP:', err)
+      }
+    }
+
+    fetchIp()
+  }, [])
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -59,13 +81,19 @@ const QuestionAppPage = () => {
     const fetchExam = async () => {
       try {
         const response = await fetch(
-          '/api/question?id=654185d1ec37f5fb6c7e6efa',
+          '/api/question?id=6542e281eee1ed9f187e1d5b',
         )
         const data = await response.json()
         console.log(data)
 
         if (response.ok) {
           setExam(data.data)
+
+          if (data.data.timeUser) {
+            const [minutes, seconds] = data.data.timeUser.split(':').map(Number)
+            const timeElapsedInSeconds = minutes * 60 + seconds
+            setTimeLeft(timeElapsedInSeconds)
+          }
         } else {
           setError(data.message || 'Failed to fetch exam')
         }
@@ -115,14 +143,80 @@ const QuestionAppPage = () => {
     )}`
   }
 
-  const verifyOptions = () => {
-    console.log()
+  const verifyOptions = async () => {
+    if (!exam?.questions) {
+      console.error('No exam questions found')
+      return
+    }
+
+    let correctAnswersCount = 0
+
+    exam.questions.forEach((q) => {
+      const userAnswer = userAnswers[q.name]
+      if (userAnswer === q.correct) {
+        correctAnswersCount++
+      }
+    })
+
+    const totalQuestions = exam.questions.length
+    const scorePercentage = (correctAnswersCount / totalQuestions) * 100
+
+    setResults({
+      ...results,
+      result: +scorePercentage.toFixed(0),
+      corrects: `${correctAnswersCount}/${totalQuestions}`,
+    })
+
+    const updatedData = {
+      timeUser: formatTime(timeLeft),
+      puntajeObtenido: scorePercentage,
+      ipUsuario,
+    }
+
+    try {
+      const response = await fetch(
+        '/api/question?id=6542e281eee1ed9f187e1d5b',
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedData),
+        },
+      )
+
+      // console.log(response)
+      setIsShowResult(true)
+      if (response.ok) {
+        const data = await response.json()
+        console.log('Data updated successfully', data)
+      }
+    } catch (err: any) {
+      console.error('Error updating exam data:', err)
+    }
   }
 
   return (
-    <div>
+    <div
+      style={{
+        padding: 24,
+      }}
+    >
       <h1>Exam Questions</h1>
       <h2>{formatTime(timeLeft)} / 5:00</h2>
+
+      {isShowResult && (
+        <div
+          style={{
+            border: '3px dotted green',
+            borderRadius: 23,
+            padding: 12,
+          }}
+        >
+          <h3>Tu resultado es</h3> <b>{results.result}/100</b> <hr />
+          <h5> {results.corrects}</h5>
+        </div>
+      )}
 
       {/** @ts-ignore */}
       <Slider ref={sliderRef} {...settings}>
@@ -130,7 +224,7 @@ const QuestionAppPage = () => {
           <div key={q.name} style={{ width: 430 }}>
             <h2>{q.name}</h2>
             <p>{q.desc}</p>
-            {q.options.map((option,i) => (
+            {q.options.map((option, i) => (
               <div className="radioWrapper" key={option.id}>
                 <input
                   className="radioInput"

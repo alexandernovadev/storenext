@@ -16,6 +16,8 @@ const createExam = async (req: NextApiRequest, res: NextApiResponse) => {
       ipUsuario,
       puntajeObtenido,
       questions,
+      timeLimit,
+      timeUser,
     } = req.body
 
     const exam: IExam = {
@@ -25,6 +27,8 @@ const createExam = async (req: NextApiRequest, res: NextApiResponse) => {
       ipUsuario,
       puntajeObtenido,
       questions,
+      timeLimit,
+      timeUser
     }
 
     const newExam = new Exam(exam)
@@ -40,6 +44,7 @@ const createExam = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 }
 
+
 const editExam = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     await db.connect()
@@ -53,6 +58,8 @@ const editExam = async (req: NextApiRequest, res: NextApiResponse) => {
       ipUsuario,
       puntajeObtenido,
       questions,
+      timeLimit,
+      timeUser,
     } = req.body
 
     const updatedExam = await Exam.findByIdAndUpdate(
@@ -64,6 +71,8 @@ const editExam = async (req: NextApiRequest, res: NextApiResponse) => {
         ipUsuario,
         puntajeObtenido,
         questions,
+        timeLimit,
+        timeUser,
       },
       { new: true },
     )
