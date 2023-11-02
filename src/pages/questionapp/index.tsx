@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { css } from '@emotion/react'
-import styled from '@emotion/styled'
+
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
@@ -54,6 +53,49 @@ const QuestionAppPage = () => {
   const [ipUsuario, setIpUsuario] = useState<string | null>(null)
 
   useEffect(() => {
+    // Función para prevenir la recarga de la página y el clic derecho
+    const preventReloadAndRightClick = (e: KeyboardEvent | MouseEvent) => {
+      if (
+        e.type === "keydown" && 
+        ((e as KeyboardEvent).which === 116 || 
+        ((e as KeyboardEvent).which === 82 && (e as KeyboardEvent).ctrlKey))
+      ) {
+        e.preventDefault();
+      } else if (e.type === "contextmenu") {
+        e.preventDefault();
+      }
+    };
+
+    // Event listeners para bloquear F5/Ctrl+R y el clic derecho
+    document.addEventListener("keydown", preventReloadAndRightClick);
+    document.addEventListener("contextmenu", preventReloadAndRightClick);
+
+    // Limpiar los event listeners al desmontar el componente
+    return () => {
+      document.removeEventListener("keydown", preventReloadAndRightClick);
+      document.removeEventListener("contextmenu", preventReloadAndRightClick);
+    };
+  }, []);
+  useEffect(() => {
+    // Función para manejar el evento beforeunload
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      // Algunos navegadores requieren que se establezca returnValue.
+      e.returnValue = '';
+    };
+  
+    // Agregar y remover el event listener
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+  
+  // ... el resto de tu código ...
+  
+  
+  
+  useEffect(() => {
     if (timeLeft < 1) {
       verifyOptions()
       setTimeEnds(true)
@@ -91,7 +133,7 @@ const QuestionAppPage = () => {
     const fetchExam = async () => {
       try {
         const response = await fetch(
-          '/api/question?id=6542e281eee1ed9f187e1d5b',
+          '/api/question?id=6542f0d5a9f897300506947d',
         )
         const data = await response.json()
         console.log(data)
@@ -181,7 +223,7 @@ const QuestionAppPage = () => {
 
     try {
       const response = await fetch(
-        '/api/question?id=6542e281eee1ed9f187e1d5b',
+        '/api/question?id=6542f0d5a9f897300506947d',
         {
           method: 'PUT',
           headers: {
@@ -307,5 +349,6 @@ const QuestionAppPage = () => {
     </div>
   )
 }
+
 
 export default QuestionAppPage
