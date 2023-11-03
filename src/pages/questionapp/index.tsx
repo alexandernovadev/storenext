@@ -56,9 +56,9 @@ const QuestionAppPage = () => {
     // Función para prevenir la recarga de la página y el clic derecho
     const preventReloadAndRightClick = (e: KeyboardEvent | MouseEvent) => {
       if (
-        e.type === "keydown" && 
-        ((e as KeyboardEvent).which === 116 || 
-        ((e as KeyboardEvent).which === 82 && (e as KeyboardEvent).ctrlKey))
+        e.type === "keydown" &&
+        ((e as KeyboardEvent).which === 116 ||
+          ((e as KeyboardEvent).which === 82 && (e as KeyboardEvent).ctrlKey))
       ) {
         e.preventDefault();
       } else if (e.type === "contextmenu") {
@@ -83,18 +83,18 @@ const QuestionAppPage = () => {
       // Algunos navegadores requieren que se establezca returnValue.
       e.returnValue = '';
     };
-  
+
     // Agregar y remover el event listener
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
-  
+
   // ... el resto de tu código ...
-  
-  
-  
+
+
+
   useEffect(() => {
     if (timeLeft < 1) {
       verifyOptions()
@@ -141,13 +141,13 @@ const QuestionAppPage = () => {
         const response = await fetch('/api/question?id=6542f0d5a9f897300506947d');
         const data = await response.json();
         console.log(data);
-  
+
         if (response.ok) {
           // Antes de establecer el examen, mezcla las preguntas
           const shuffledQuestions = shuffleArray(data.data.questions);
           const shuffledExam = { ...data.data, questions: shuffledQuestions };
           setExam(shuffledExam);
-  
+
           if (data.data.timeUser) {
             const [minutes, seconds] = data.data.timeUser.split(':').map(Number);
             const timeElapsedInSeconds = minutes * 60 + seconds;
@@ -162,7 +162,7 @@ const QuestionAppPage = () => {
         setLoading(false);
       }
     };
-  
+
     fetchExam();
   }, [])
 
@@ -328,6 +328,17 @@ const QuestionAppPage = () => {
               style={{
                 background: 'purple',
                 color: 'white',
+                marginRight: '10px', // Agregar un margen si se desea que haya espacio entre los botones
+              }}
+              // @ts-ignore
+              onClick={() => sliderRef.current?.slickPrev()}
+            >
+              Anterior
+            </Button>
+            <Button
+              style={{
+                background: 'purple',
+                color: 'white',
               }}
               // @ts-ignore
               onClick={() => sliderRef.current?.slickNext()}
@@ -340,17 +351,17 @@ const QuestionAppPage = () => {
 
       <br />
       <div>
-      {!timeEnds && (
-        <Button
-          onClick={verifyOptions}
-          variant="outlined"
-          style={{
-            background: 'blue',
-          }}
-          disabled={timeLeft < 0 || isShowResult}
-        >
-          Enviar Test
-        </Button>
+        {!timeEnds && (
+          <Button
+            onClick={verifyOptions}
+            variant="outlined"
+            style={{
+              background: 'blue',
+            }}
+            disabled={timeLeft < 0 || isShowResult}
+          >
+            Enviar Test
+          </Button>
         )}
       </div>
     </div>
