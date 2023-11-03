@@ -128,35 +128,42 @@ const QuestionAppPage = () => {
 
     return () => clearTimeout(timerId)
   }, [timeLeft])
-
+  const shuffleArray = (array: any[]) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]]; // intercambio de elementos
+    }
+    return array;
+  };
   useEffect(() => {
     const fetchExam = async () => {
       try {
-        const response = await fetch(
-          '/api/question?id=6542f0d5a9f897300506947d',
-        )
-        const data = await response.json()
-        console.log(data)
-
+        const response = await fetch('/api/question?id=6542f0d5a9f897300506947d');
+        const data = await response.json();
+        console.log(data);
+  
         if (response.ok) {
-          setExam(data.data)
-
+          // Antes de establecer el examen, mezcla las preguntas
+          const shuffledQuestions = shuffleArray(data.data.questions);
+          const shuffledExam = { ...data.data, questions: shuffledQuestions };
+          setExam(shuffledExam);
+  
           if (data.data.timeUser) {
-            const [minutes, seconds] = data.data.timeUser.split(':').map(Number)
-            const timeElapsedInSeconds = minutes * 60 + seconds
-            setTimeLeft(timeElapsedInSeconds)
+            const [minutes, seconds] = data.data.timeUser.split(':').map(Number);
+            const timeElapsedInSeconds = minutes * 60 + seconds;
+            setTimeLeft(timeElapsedInSeconds);
           }
         } else {
-          setError(data.message || 'Failed to fetch exam')
+          setError(data.message || 'Failed to fetch exam');
         }
       } catch (err: any) {
-        setError(err.message || 'An error occurred')
+        setError(err.message || 'An error occurred');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-
-    fetchExam()
+    };
+  
+    fetchExam();
   }, [])
 
   const handleAnswerChange = (questionName: string, answerId: string) => {
@@ -256,7 +263,7 @@ const QuestionAppPage = () => {
             color: '#d8432c',
           }}
         >
-          <b>"Se acabo el time"</b>{' '}
+          <b>"Se acabo su tiempo"</b>{' '}
         </h1>
       )}
       <h1>Exam Questions</h1>
