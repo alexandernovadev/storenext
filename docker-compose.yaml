@@ -1,11 +1,8 @@
-version: '4'
 services:
-  shopnext-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: nextshop-app
+  teslodb:
+    image: mongo:5.0.0
+    container_name: teslo-database
     ports:
-      - "3000:3000"
+      - 27017:27017
     volumes:
-      - ./src:/app
+      - ./mongo:/data/db
