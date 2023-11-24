@@ -7,11 +7,23 @@ import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
 import { SWRConfig } from 'swr'
 import { PayPalScriptProvider } from '@paypal/react-paypal-js'
+import '../i18n';
+import { useEffect } from 'react'
+import i18n from '../i18n'
 
 export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) {
+
+  useEffect(() => {
+    const language = localStorage.getItem('language')
+    if (language) {
+      i18n.changeLanguage(language)
+    }
+  }, [])
+  
+
   return (
     <SessionProvider session={session}>
       <PayPalScriptProvider

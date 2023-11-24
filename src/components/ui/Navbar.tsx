@@ -11,7 +11,7 @@ import {
   Typography,
   styled,
 } from '@mui/material'
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 import NextLink from 'next/link'
 import {
@@ -27,23 +27,33 @@ import { CartContext, UiContext } from '@/context'
 import { LogoMainTwo } from '@/assets/LogoMainTwo'
 import MenuIcon from '@mui/icons-material/Menu'
 import logo from '@/assets/logotemp.png'
+
+import { useTranslation } from 'react-i18next'
+
 const routesCategory = [
   {
     href: '/category/men',
     name: 'Hombres',
+    key: 'man',
   },
   {
     href: '/category/women',
     name: 'Mujeres',
+    key: 'women',
   },
   {
     href: '/category/kid',
     name: 'Niños',
+    key: 'kids',
   },
 ]
 
 export const Navbar = () => {
   const router = useRouter()
+  const { t } = useTranslation()
+
+  const { i18n } = useTranslation()
+  const [language, setLanguage] = useState()
 
   const { toggleSideMenu } = useContext(UiContext)
   const { numberOfItems } = useContext(CartContext)
@@ -60,6 +70,15 @@ export const Navbar = () => {
     return (url: string) => (router.pathname === url ? 'primary' : 'info')
   }, [router.pathname])
 
+
+  useEffect(() => {
+    const language = localStorage.getItem('language')
+    if (language) {
+      i18n.changeLanguage(language)
+      // @ts-ignore
+      setLanguage(language)
+    }
+  }, [])
   const StyledBox = styled(Box)(({ theme }) => ({
     height: '100%',
     margin: '80px auto',
@@ -76,6 +95,46 @@ export const Navbar = () => {
     },
   }))
 
+  const SelectLanguage = () => {
+    const changeLanguage = (lng: string) => {
+      i18n.changeLanguage(lng)
+      localStorage.setItem('language', lng)
+      // @ts-ignore
+      setLanguage(lng)
+    }
+    return (
+      <Box sx={{ display: { xs: 'none', sm: 'flex' , gap:2} }}>
+        <Button
+          onClick={() => changeLanguage('es')}
+          
+          sx={{
+            '&:hover': {
+              backgroundColor: 'gray',
+              color: 'white',
+            },
+            backgroundColor: language === 'es' ? 'black' : undefined,
+            color:language === 'es' ? 'white' : undefined,
+          }}
+        >
+          ES
+        </Button>
+        <Button
+          onClick={() => changeLanguage('en')}
+          sx={{
+            '&:hover': {
+              backgroundColor: 'black',
+              color: 'white',
+            },
+            backgroundColor: language === 'en' ? 'black' : undefined,
+            color:language === 'en' ? 'white' : undefined,
+
+          }}
+        >
+          EN
+        </Button>
+      </Box>
+    )
+  }
   return (
     <AppBar>
       <Toolbar>
@@ -92,9 +151,8 @@ export const Navbar = () => {
               justifyContent: 'center',
               alignItems: 'center',
             }}
-            className="fadeIn"
           >
-            {routesCategory.map(({ href, name }) => (
+            {routesCategory.map(({ href, name, key }) => (
               <NextLink
                 href={href}
                 key={String(href)}
@@ -110,7 +168,7 @@ export const Navbar = () => {
                     },
                   }}
                 >
-                  {name}
+                  {t(`options.${key}`)}
                 </Button>
               </NextLink>
             ))}
@@ -169,6 +227,8 @@ export const Navbar = () => {
                 </Badge>
               </IconButton>
             </NextLink>
+
+            <SelectLanguage />
 
             <IconButton onClick={toggleSideMenu}>
               <MenuIcon />

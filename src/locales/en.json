@@ -1,0 +1,9 @@
+{
+  "welcome": "Welcome to Shop Mart Store",
+  "products": "Products",
+  "options": {
+    "man": "Man",
+    "women": "Woman",
+    "kids": "Kids"
+  }
+}
